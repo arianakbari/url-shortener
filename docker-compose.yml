@@ -1,0 +1,34 @@
+services:
+  mongo:
+    image: mongo:7.0.0
+    container_name: mongodb-service
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_DATABASE=url-shortener
+    ports:
+      - 27017:27017
+    volumes:
+      - data:/data/db
+    networks:
+      - app-network
+
+  app:
+    container_name: url-shortener
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - ${PORT:-8080}:${PORT:-8080}
+    depends_on:
+      - mongo
+    environment:
+      MONGO_URI: mongodb://mongo:27017/url-shortener
+      PORT: ${PORT:-8080}
+    networks:
+      - app-network
+
+volumes:
+  data:
+
+networks:
+  app-network:
