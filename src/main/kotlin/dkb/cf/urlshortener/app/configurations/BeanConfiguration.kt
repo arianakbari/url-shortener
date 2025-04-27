@@ -19,10 +19,12 @@ class BeanConfiguration {
     fun urlService(
         urlMappingRepository: UrlMappingRepository,
         tokenGeneratorService: TokenGeneratorService,
+        configService: ConfigService,
     ): UrlService =
         UrlServiceImpl(
             urlMappingRepository = urlMappingRepository,
             tokenGeneratorService = tokenGeneratorService,
+            configService = configService,
         )
 
     @Bean
@@ -32,10 +34,7 @@ class BeanConfiguration {
         )
 
     @Bean
-    fun tokenGeneratorService(configService: ConfigService): TokenGeneratorService =
-        TokenGeneratorServiceImpl(
-            configService = configService,
-        )
+    fun tokenGeneratorService(): TokenGeneratorService = TokenGeneratorServiceImpl()
 
     @Bean
     fun openApi(): OpenAPI {

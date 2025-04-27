@@ -1,6 +1,7 @@
 package dkb.cf.urlshortener.domain.services
 
 import dkb.cf.urlshortener.domain.boundaries.input.UrlService
+import dkb.cf.urlshortener.domain.boundaries.output.ConfigService
 import dkb.cf.urlshortener.domain.boundaries.output.TokenGeneratorService
 import dkb.cf.urlshortener.domain.boundaries.output.UrlMappingRepository
 import dkb.cf.urlshortener.domain.entities.UrlMapping
@@ -9,9 +10,14 @@ import dkb.cf.urlshortener.domain.exceptions.UrlMappingNotFoundException
 class UrlServiceImpl(
     private val urlMappingRepository: UrlMappingRepository,
     private val tokenGeneratorService: TokenGeneratorService,
+    private val configService: ConfigService,
 ) : UrlService {
     override fun shortenUrl(originalUrl: String): UrlMapping {
-        val token = tokenGeneratorService.generateToken(originalUrl = originalUrl)
+        val token =
+            tokenGeneratorService.generateToken(
+                originalUrl = originalUrl,
+                length = configService.getTokenLength(),
+            )
 
         return urlMappingRepository.findByToken(token) ?: run {
             urlMappingRepository.save(
